@@ -1,0 +1,20 @@
+{
+  "trimmomatic_jar_path": "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/trimmomatic-0.36.jar",
+  "reads1":
+  {
+    "path":  "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R1.fastq.gz",
+    "class": "File"
+  },
+  "reads2":
+  {
+    "path":  "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R2.fastq.gz",
+    "class": "File"
+  },
+  "input_adapters_file":
+  {
+    "path":  "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa",
+    "class": "File"
+  },
+  "end_mode": "PE",
+  "illuminaclip": "1:30:20:4:true"
+}

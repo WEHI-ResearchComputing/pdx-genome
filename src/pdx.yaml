@@ -1,0 +1,11 @@
+#input: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R*"
+#outputs: "*.gz"
+end_mode: PE
+reads1:
+  class: File
+  format: "edam:format_1930"
+  path: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R1.fastq.gz"
+reads2:
+  class: File
+  format: "edam:format_1930"
+  path: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R2.fastq.gz"

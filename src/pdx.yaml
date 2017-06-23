@@ -1,11 +1,19 @@
-#input: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R*"
-#outputs: "*.gz"
 end_mode: PE
 reads1:
   class: File
   format: "edam:format_1930"
-  path: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R1.fastq.gz"
+  path: "data/S1_R1.fastq.gz"
 reads2:
   class: File
   format: "edam:format_1930"
-  path: "/wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/micronuclei/data/HY5YCCCXX_5_160804_FR07886227_Homo-sapiens__R_160728_LIZCAL_DNA_M001_R2.fastq.gz"
+  path: "data/S1_R2.fastq.gz"
+nthreads: 4
+illuminaClip:
+  adapters:
+    class: File
+    path: "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa"
+  seedMismatches: 1
+  palindromeClipThreshold: 30
+  simpleClipThreshold: 20
+  minAdapterLength: 4
+  keepBothReads: "true"

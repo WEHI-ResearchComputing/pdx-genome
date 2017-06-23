@@ -116,7 +116,7 @@ inputs:
     type: trimmomatic-types.yml#illuminaClipping?
     inputBinding:
       valueFrom: |
-        "ILLUMINACLIP:"$(self.adapters_file.path)":"$(self.seedMismatches):$(self.palindromeClipThreshold):$(self.simpleClipThreshold):$(self.minAdapterLength):$(self.keepBothReads)
+        ILLUMINACLIP:$(inputs.illuminaClip.adapters.path):$(self.seedMismatches):$(self.palindromeClipThreshold):$(self.simpleClipThreshold):$(self.minAdapterLength):$(self.keepBothReads)
       position: 11
     doc: Cut adapter and other illumina-specific sequences from the read.
 
@@ -223,13 +223,13 @@ outputs:
     type: File?
     format: edam:format_1930  # fastq
     outputBinding:
-      glob: $(inputs.reads2.path.nameroot).trimmed.fastq
+      glob: $(inputs.reads2.nameroot).trimmed.fastq
 
   reads2_trimmed_unpaired:
     type: File?
     format: edam:format_1930  # fastq
     outputBinding:
-      glob: $(inputs.reads2.path.nameroot).unpaired.trimmed.fastq
+      glob: $(inputs.reads2.nameroot).unpaired.trimmed.fastq
 
 baseCommand: [ java, org.usadellab.trimmomatic.Trimmomatic ]
 
@@ -241,7 +241,7 @@ arguments:
   position: 7
 - valueFrom: |
     ${
-      if (inputs.end_mode == "PE" && inputs.reads2) {
+      if (inputs.end_mode == "PE" && inputs.reads1) {
         return inputs.reads1.nameroot + '.trimmed.unpaired.fastq';
       } else {
         return null;
@@ -279,5 +279,4 @@ doc: |
   depending on the Illumina pipeline used).
 
 $namespaces: { edam: http://edamontology.org/ }
-$schemas: [ EDAM_1.16.owl ]
-#$schemas: [ http://edamontology.org/EDAM_1.16.owl ]
+$schemas: [ http://edamontology.org/EDAM_1.16.owl ]

@@ -66,5 +66,4 @@ types:
     symbols: [ SE, PE ]
 
 $namespaces: { edam: http://edamontology.org/ }
-$schemas: [ EDAM_1.16.owl ]
-#$schemas: [ http://edamontology.org/EDAM_1.16.owl ]
+$schemas: [ http://edamontology.org/EDAM_1.16.owl ]

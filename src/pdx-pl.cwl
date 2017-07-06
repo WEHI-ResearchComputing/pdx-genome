@@ -217,6 +217,53 @@ steps:
 
     out: [sorted]
 
+  xenomapping:
+    run: tools/xenomapper.cwl
+
+    in:
+      primary_sam:
+        source: align-to-human/aligned-file
+      secondary_sam:
+        source: align-to-mouse/aligned-file
+      primary_specific_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.human_specific.sam'
+          }
+      secondary_specific_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.mouse_specific.sam'
+          }
+      primary_multi_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.human_multi.sam'
+          }
+      secondary_multi_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.mouse_multi.sam'
+          }
+      unassigned_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.unassigned.sam'
+          }
+      unresolved_fn:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return self.nameroot + '.unresolved.sam'
+          }
+
+    out: [primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved]
+
   # rename:
   #   run:
   #     class: ExpressionTool

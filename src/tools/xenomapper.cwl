@@ -7,6 +7,8 @@ requirements:
 #- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 
+baseCommand: xenomapper
+
 inputs:
   primary_sam:
     type: File?
@@ -41,7 +43,7 @@ inputs:
       --secondary_bam SECONDARY_BAM a BAM format Bowtie2 mapping output file corresponding to
       the secondary or contaminating species
 
-  primary_specific:
+  primary_specific_fn:
     type: string?
     inputBinding:
       prefix: --primary_specific
@@ -49,7 +51,7 @@ inputs:
       --primary_specific PRIMARY_SPECIFIC name for SAM format output file for reads mapping to
       a specific location in the primary species
 
-  secondary_specific:
+  secondary_specific_fn:
     type: string?
     inputBinding:
       prefix: --secondary_specific
@@ -57,7 +59,7 @@ inputs:
       --secondary_specific SECONDARY_SPECIFIC name for SAM format output file for reads mapping to a
       specific location in the secondary species
 
-  primary_multi:
+  primary_multi_fn:
     type: string?
     inputBinding:
       prefix: --primary_multi
@@ -65,7 +67,7 @@ inputs:
       --primary_multi PRIMARY_MULTI name for SAM format output file for reads multi
       mapping in the primary species
 
-  secondary_multi:
+  secondary_multi_fn:
     type: string?
     inputBinding:
       prefix: --secondary_multi
@@ -73,14 +75,14 @@ inputs:
       --secondary_multi SECONDARY_MULTI name for SAM format output file for reads multi
       mapping in the secondary species
 
-  unassigned:
+  unassigned_fn:
     type: string?
     inputBinding:
       prefix: --unassigned
     doc: |
       --unassigned UNASSIGNED name for SAM format output file for unassigned (non-mapping) reads
 
-  unresolved:
+  unresolved_fn:
     type: string?
     inputBinding:
       prefix: --unresolved

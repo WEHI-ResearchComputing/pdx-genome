@@ -1,4 +1,0 @@
-class: DockerRequirement
-dockerPull: dukegcb/trimmomatic
-dockerFile: >
-  $import: trimmomatic-Dockerfile

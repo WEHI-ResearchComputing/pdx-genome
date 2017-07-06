@@ -7,40 +7,48 @@ requirements:
 - $import: tools/trimmomatic-types.yml
 - class: InlineJavascriptRequirement
 - class: ScatterFeatureRequirement
+- class: StepInputExpressionRequirement
 
 inputs:
-  read1: File[]
-  read2: File[]
+  read1: File
+  read2: File
 
 outputs:
+  # trim with trimmomatic
   trim-logs:
-    type: File[]
-    outputSource: trimmomatic/output_log
+    type: File
+    outputSource: trim/output_log
   read1-paired:
-    type: File[]
-    outputSource: trimmomatic/reads1_trimmed
+    type: File
+    outputSource: trim/reads1_trimmed
   read2-paired:
-    type: File[]
-    outputSource: trimmomatic/reads1_trimmed_unpaired
+    type: File?
+    outputSource: trim/reads1_trimmed_unpaired
   read1-unpaired:
-    type: File[]
-    outputSource: trimmomatic/reads2_trimmed_paired
+    type: File?
+    outputSource: trim/reads2_trimmed_paired
   read2-unpaired:
-    type: File[]
-    outputSource: trimmomatic/reads2_trimmed_unpaired
+    type: File?
+    outputSource: trim/reads2_trimmed_unpaired
+  # align with bowtie2
+  aligned-file:
+    type: File
+    outputSource: align/aligned-file
 
 steps:
-  trimmomatic:
+
+  trim:
     run: tools/trimmomatic.cwl
-    scatter: [reads1, reads2]
-    scatterMethod: dotproduct
+    # scatter: [reads1, reads2]
+    # scatterMethod: dotproduct
+
     in:
       reads1: read1
       reads2: read2
       end_mode:
         default: PE
       nthreads:
-        default: 4
+        valueFrom: ${ return 4; }
       illuminaClip:
         default:
           adapters:
@@ -53,6 +61,50 @@ steps:
           keepBothReads: "true"
 
     out: [output_log, reads1_trimmed, reads1_trimmed_unpaired, reads2_trimmed_paired, reads2_trimmed_unpaired]
+
+  align:
+    run: tools/bowtie2.cwl
+
+    in:
+      threads:
+        valueFrom: ${ return 4; }
+      one:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return [self];
+          }
+      two:
+        source: trim/reads2_trimmed_paired
+        valueFrom: >
+          ${
+            if ( self == null ) {
+              return null;
+              } else {
+              return [self];
+            }
+          }
+      unpaired:
+        source: trim/reads1_trimmed_unpaired
+        valueFrom: >
+          ${
+            if ( self == null ) {
+              return null;
+              } else {
+              return [self];
+            }
+          }
+      bt2-idx:
+        default: /stornext/HPCScratch/PapenfussLab/reference_genomes/bowtie2/GRCm38
+      local:
+        default: true
+      reorder:
+        default: true
+      # aligned-file:
+      #   glob: "*.bam"
+
+    out: [aligned-file]
+
 
   # rename:
   #   run:

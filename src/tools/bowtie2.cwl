@@ -57,7 +57,7 @@ inputs:
       If - is specified, bowtie2 gets the reads from the "standard in" or "stdin" filehandle.
 
   samout:
-    type: File?
+    type: string
     inputBinding:
       prefix: -S
     doc: |
@@ -1003,11 +1003,13 @@ inputs:
       for two identical reads. This is counter-intuitive for some users, but might be more appropriate in situations
       where the input consists of many identical reads.
 
-stdout: $(inputs.one[0].nameroot + '.sam')
+# stdout: $(inputs.one[0].nameroot + '.sam')
 
 outputs:
   aligned-file:
-    type: stdout
+    type: File
+    outputBinding:
+      glob: $(inputs.samout)
 
 baseCommand:
 - bowtie2

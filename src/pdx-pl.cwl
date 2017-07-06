@@ -30,17 +30,15 @@ outputs:
   read2-unpaired:
     type: File?
     outputSource: trim/reads2_trimmed_unpaired
-  # align with bowtie2
-  aligned-file:
+  # align to mouse with bowtie2
+  mouse-aligned-file:
     type: File
-    outputSource: align/aligned-file
+    outputSource: align-to-mouse/aligned-file
 
 steps:
 
   trim:
     run: tools/trimmomatic.cwl
-    # scatter: [reads1, reads2]
-    # scatterMethod: dotproduct
 
     in:
       reads1: read1
@@ -55,17 +53,23 @@ steps:
             class: File
             location: "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa"
           seedMismatches: 1
-          palindromeClipThreshold: 30
+          palindromeClipThreshold: 20
           simpleClipThreshold: 20
           minAdapterLength: 4
           keepBothReads: "true"
 
     out: [output_log, reads1_trimmed, reads1_trimmed_unpaired, reads2_trimmed_paired, reads2_trimmed_unpaired]
 
-  align:
+  align-to-mouse:
     run: tools/bowtie2.cwl
 
     in:
+      samout:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+              return self.nameroot + '.mouse.sam'
+          }
       threads:
         valueFrom: ${ return 4; }
       one:
@@ -100,8 +104,53 @@ steps:
         default: true
       reorder:
         default: true
-      # aligned-file:
-      #   glob: "*.bam"
+
+    out: [aligned-file]
+
+  align-to-human:
+    run: tools/bowtie2.cwl
+
+    in:
+      samout:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+              return self.nameroot + '.human.sam'
+          }
+      threads:
+        valueFrom: ${ return 4; }
+      one:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+            return [self];
+          }
+      two:
+        source: trim/reads2_trimmed_paired
+        valueFrom: >
+          ${
+            if ( self == null ) {
+              return null;
+              } else {
+              return [self];
+            }
+          }
+      unpaired:
+        source: trim/reads1_trimmed_unpaired
+        valueFrom: >
+          ${
+            if ( self == null ) {
+              return null;
+              } else {
+              return [self];
+            }
+          }
+      bt2-idx:
+        default: /stornext/HPCScratch/PapenfussLab/reference_genomes/bowtie2/GRCh38_no_alt
+      local:
+        default: true
+      reorder:
+        default: true
 
     out: [aligned-file]
 

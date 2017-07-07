@@ -49,7 +49,24 @@ outputs:
     type: File
     outputSource: sort-human/sorted
   # compare genomes with xenomapper
-
+  primary_specific:
+    type: File?
+    outputSource: xenomapping/primary_specific
+  secondary_specific:
+    type: File?
+    outputSource: xenomapping/secondary_specific
+  primary_multi:
+    type: File?
+    outputSource: xenomapping/primary_multi
+  secondary_multi:
+    type: File?
+    outputSource: xenomapping/secondary_multi
+  unassigned:
+    type: File?
+    outputSource: xenomapping/unassigned
+  unresolved:
+    type: File?
+    outputSource: xenomapping/unresolved
 
 steps:
 
@@ -265,6 +282,34 @@ steps:
           }
 
     out: [primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved]
+
+  #
+  # Call with platyus
+  #
+  platyus:
+    run: tools/platypus.cwl
+
+    in:
+      bamFiles:
+        source: sort-human/sorted
+        valueFrom: >
+          ${
+            if ( self == null ) {
+              return null;
+              } else {
+              return [self];
+            }
+          }
+      refFile:
+        default: /home/thomas.e/home/dev/Homo_sapiens.GRCh38.dna.toplevel.fa
+      outputFileName:
+        source: align-to-human/aligned-file
+        valueFrom: >
+          ${
+              return self.nameroot + 'platypus.vcf'
+          }
+
+    out: [output]
 
   # rename:
   #   run:

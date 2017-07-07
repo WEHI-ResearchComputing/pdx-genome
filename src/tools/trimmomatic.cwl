@@ -4,9 +4,6 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 hints:
-  EnvVarRequirement:
-    envDef:
-      CLASSPATH: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/trimmomatic-0.36.jar
   SoftwareRequirement:
     packages:
       trimmomatic:
@@ -15,6 +12,7 @@ hints:
 
 requirements:
 #- $import: trimmomatic-docker.yml
+- $import: envvar-global.yml
 - $import: trimmomatic-types.yml
 - class: InlineJavascriptRequirement
 - class: ShellCommandRequirement

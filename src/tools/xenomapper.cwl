@@ -4,7 +4,7 @@ cwlVersion: v1.0
 class: CommandLineTool
 
 requirements:
-#- $import: envvar-global.yml
+- $import: envvar-global.yml
 - class: InlineJavascriptRequirement
 
 baseCommand: xenomapper
@@ -137,29 +137,29 @@ outputs:
   primary_specific:
     type: File?
     outputBinding:
-      glob: $(inputs.primary_specific)
+      glob: $(inputs.primary_specific_fn)
 
   secondary_specific:
     type: File?
     outputBinding:
-      glob: $(inputs.secondary_specific)
+      glob: $(inputs.secondary_specific_fn)
 
   primary_multi:
     type: File?
     outputBinding:
-      glob: $(inputs.primary_multi)
+      glob: $(inputs.primary_multi_fn)
 
   secondary_multi:
     type: File?
     outputBinding:
-      glob: $(inputs.secondary_multi)
+      glob: $(inputs.secondary_multi_fn)
 
   unassigned:
     type: File?
     outputBinding:
-      glob: $(inputs.unassigned)
+      glob: $(inputs.unassigned_fn)
 
   unresolved:
     type: File?
     outputBinding:
-      glob: $(inputs.unresolved)
+      glob: $(inputs.unresolved_fn)

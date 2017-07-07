@@ -5,6 +5,7 @@ cwlVersion: v1.0
 
 requirements:
 - $import: tools/trimmomatic-types.yml
+- $import: tools/envvar-global.yml
 - class: InlineJavascriptRequirement
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
@@ -47,6 +48,7 @@ outputs:
   human-compress:
     type: File
     outputSource: sort-human/sorted
+  # compare genomes with xenomapper
 
 
 steps:

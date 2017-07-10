@@ -48,6 +48,10 @@ outputs:
   human-compress:
     type: File
     outputSource: sort-human/sorted
+  # Index human bam
+  human-index:
+    type: File
+    outputSource: index-human/index
   # compare genomes with xenomapper
   primary_specific:
     type: File?
@@ -236,6 +240,21 @@ steps:
 
     out: [sorted]
 
+  #
+  # index human bam
+  #
+  index-human:
+    run: tools/samtools-index.cwl
+
+    in:
+      input:
+        source: sort-human/sorted
+
+    out: [index]
+
+  #
+  # xenomapper
+  #
   xenomapping:
     run: tools/xenomapper.cwl
 
@@ -284,6 +303,39 @@ steps:
     out: [primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved]
 
   #
+  # Gather human bam and index into one dependency
+  #
+  gather:
+    run:
+      class: ExpressionTool
+
+      inputs:
+        bamFile:
+          type: File
+        bamIndex:
+          type: File
+
+      outputs:
+        combined:
+          type: File
+
+      expression: >
+        ${
+          var ret = inputs.bamFile;
+          ret["secondaryFiles"] = [
+            inputs.bamIndex
+          ];
+          return {"combined" : ret};
+        }
+
+    in:
+      bamFile:
+        source: sort-human/sorted
+      bamIndex:
+        source: index-human/index
+
+    out: [combined]
+  #
   # Call with platyus
   #
   platyus:
@@ -291,7 +343,7 @@ steps:
 
     in:
       bamFiles:
-        source: sort-human/sorted
+        source: gather/combined
         valueFrom: >
           ${
             if ( self == null ) {
@@ -301,12 +353,17 @@ steps:
             }
           }
       refFile:
-        default: /home/thomas.e/home/dev/Homo_sapiens.GRCh38.dna.toplevel.fa
+        default: /wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
       outputFileName:
-        source: align-to-human/aligned-file
+        source: sort-human/sorted
         valueFrom: >
           ${
-              return self.nameroot + 'platypus.vcf'
+              return self.nameroot + '.platypus.vcf'
+          }
+      verbosity:
+        valueFrom: >
+          ${
+            return 0;
           }
 
     out: [output]

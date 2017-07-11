@@ -29,7 +29,6 @@ inputs:
     doc: |
       Set maximum memory per thread; suffix K/M/G recognized [768M]
 
-
   input:
     type: File
     inputBinding:

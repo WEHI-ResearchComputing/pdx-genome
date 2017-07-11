@@ -9,6 +9,13 @@ requirements:
 - class: InlineJavascriptRequirement
 
 inputs:
+  bamFiles:
+    type: File[]
+    inputBinding:
+      position: 99
+    doc: |
+      List of input bam files
+
   illumina1.3:
     type: boolean?
     inputBinding:
@@ -59,7 +66,7 @@ inputs:
       to be increased. Once above the cross-sample minimum of 8000 the -d parameter will have an effect. [250]
 
   redo-BAQ:
-    type: boolean
+    type: boolean?
     inputBinding:
       prefix: --redo-BAQ
     doc: |
@@ -141,7 +148,7 @@ inputs:
     doc: |
       -x, --ignore-overlaps Disable read-pair overlap detection.
 
-  output:
+  output_fn:
     type: string
     inputBinding:
       prefix: --output
@@ -292,6 +299,6 @@ outputs:
   output:
     type: File
     outputBinding:
-      glob: $(inputs.output_name)
+      glob: $(inputs.output_fn)
 
 baseCommand: [samtools, mpileup]

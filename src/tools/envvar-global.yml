@@ -1,11 +1,11 @@
 class: EnvVarRequirement
 envDef:
   - envName: "PATH"
-    envValue: "/stornext/System/data/apps/python/python-3.5.3/bin:/stornext/System/data/apps/bowtie2/bowtie2-2.2.9/bin:/stornext/System/data/apps/samtools/samtools-1.5/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/thomas.e/.local/bin:/stornext/System/data/apps/node/node-6.11.0/bin/node:/stornext/System/data/apps/htslib/htslib-1.5/bin:/stornext/System/data/apps/varscan/varscan-2.3.9/bin"
+    envValue: "/stornext/System/data/apps/python/python-3.5.3/bin:/stornext/System/data/apps/bowtie2/bowtie2-2.2.9/bin:/stornext/System/data/apps/samtools/samtools-1.5/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/thomas.e/.local/bin:/stornext/System/data/apps/node/node-6.11.0/bin/node:/stornext/System/data/apps/htslib/htslib-1.5/bin"
   - envName: "LD_LIBRARY_PATH"
     envValue: "/stornext/System/data/apps/htslib/htslib-1.5/lib:/stornext/System/data/apps/python/python-3.5.3/lib:/stornext/System/data/apps/samtools/samtools-1.5/lib"
   - envName: "CLASSPATH"
-    envValue: "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/trimmomatic-0.36.jar"
+    envValue: "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/trimmomatic-0.36.jar:/stornext/System/data/apps/varscan/varscan-2.3.9/VarScan.v2.3.9.jar"
   - envName: "PYTHONPATH"
     envValue: "/stornext/System/data/apps/python/python-3.5.3/lib/python3.5/site-packages/:/home/thomas.e/.local/lib/python3.5/site-packages"
   - envName: "PLATYPUS"

@@ -49,7 +49,7 @@ inputs:
   adjust-MQ:
     type: int?
     inputBinding:
-      prefix: adjust-MQ
+      prefix: --adjust-MQ
     doc: |
       -C, --adjust-MQ INT Coefficient for downgrading mapping quality for reads containing excessive mismatches.
       Given a read with a phred-scaled probability q of being generated from the mapped position, the new mapping

@@ -282,6 +282,23 @@ steps:
 
     out: [output]
 
+  #
+  # varscan human
+  #
+  varscan-human:
+    run: tools/varscan-mpileup2snp.cwl
+
+    in:
+      input:
+        source: mpileup-human/output
+
+      output-vcf:
+        valueFrom: >
+          ${
+            return true;
+          }
+
+    out: [output]
   # #
   # # xenomapper
   # #
@@ -399,6 +416,7 @@ steps:
 
   #   out: [output]
 
+#-------------------------------------------------------------------------
   # rename:
   #   run:
   #     class: ExpressionTool

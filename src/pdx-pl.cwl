@@ -7,6 +7,17 @@ requirements:
 - $import: tools/trimmomatic-types.yml
 - $import: tools/envvar-global.yml
 - class: InlineJavascriptRequirement
+  expressionLib:
+  - var rename_trim_file = function() {
+      if ( self == null ) {
+        return null;
+      } else {
+        var xx = self.basename.split('.');
+        var id = xx.indexOf('fastq');
+        xx.splice(id, 1);
+        return xx.join('.');
+      }
+    };
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
 
@@ -15,21 +26,21 @@ inputs:
   read2: File
 
 outputs:
-  # trim with trimmomatic
+  # trim with trimmomatic and rename
   trim-logs:
     type: File
     outputSource: trim/output_log
-  read1-paired:
+  rename_reads1_trimmed_file:
     type: File
-    outputSource: trim/reads1_trimmed
-  read2-paired:
-    type: File?
+    outputSource: rename_reads1_trimmed/renamed
+  rename_reads2_trimmed_paired_file:
+    type: File
+    outputSource: trim/reads2_trimmed_unpaired
+  reads1_trimmed_unpaired_file:
+    type: File
     outputSource: trim/reads1_trimmed_unpaired
-  read1-unpaired:
-    type: File?
-    outputSource: trim/reads2_trimmed_paired
-  read2-unpaired:
-    type: File?
+  reads2_trimmed_unpaired_file:
+    type: File
     outputSource: trim/reads2_trimmed_unpaired
   # align to mouse with bowtie2
   mouse-aligned:
@@ -71,9 +82,22 @@ outputs:
   unresolved:
     type: File?
     outputSource: xenomapping/unresolved
+  # pileip
   human-mpileup:
     type: File
     outputSource: mpileup-human/output
+  # varscan output
+  varscan:
+    type: File
+    outputSource: varscan-human/output
+  # platypus output
+  platypus-vcf:
+    type: File
+    outputSource: platypus/output
+  # gridss
+  gridss:
+    type: File
+    outputSource: gridss-human/output
 
 steps:
 
@@ -84,8 +108,20 @@ steps:
     run: tools/trimmomatic.cwl
 
     in:
-      reads1: read1
-      reads2: read2
+      reads1:
+        source: read1
+        valueFrom: >
+          ${
+              self.format = "http://edamontology.org/format_1930";
+              return self;
+          }
+      reads2:
+        source: read2
+        valueFrom: >
+          ${
+              self.format = "http://edamontology.org/format_1930";
+              return self;
+          }
       end_mode:
         default: PE
       nthreads:
@@ -104,6 +140,37 @@ steps:
     out: [output_log, reads1_trimmed, reads1_trimmed_unpaired, reads2_trimmed_paired, reads2_trimmed_unpaired]
 
   #
+  # rename trimmed files by removing redundant '.fastq' from the filename
+  #
+  rename_reads1_trimmed:
+    run: tools/rename-file.cwl
+
+    in:
+      infile: trim/reads1_trimmed
+      outfile:
+        source: trim/reads1_trimmed
+        valueFrom: >
+          ${
+              return rename_trim_file();
+          }
+
+    out: [renamed]
+
+  rename_reads2_trimmed_paired:
+    run: tools/rename-file.cwl
+
+    in:
+      infile: trim/reads2_trimmed_paired
+      outfile:
+        source: trim/reads2_trimmed_paired
+        valueFrom: >
+          ${
+              return rename_trim_file();
+          }
+
+    out: [renamed]
+
+  #
   # align to mouse reference with bowtie2
   #
   align-to-mouse:
@@ -111,7 +178,7 @@ steps:
 
     in:
       samout:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
               return self.nameroot + '.mouse.sam'
@@ -125,7 +192,7 @@ steps:
             return [self];
           }
       two:
-        source: trim/reads2_trimmed_paired
+        source: rename_reads2_trimmed_paired/renamed
         valueFrom: >
           ${
             if ( self == null ) {
@@ -161,7 +228,7 @@ steps:
 
     in:
       samout:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
               return self.nameroot + '.human.sam'
@@ -169,13 +236,13 @@ steps:
       threads:
         valueFrom: ${ return 4; }
       one:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return [self];
           }
       two:
-        source: trim/reads2_trimmed_paired
+        source: rename_reads2_trimmed_paired/renamed
         valueFrom: >
           ${
             if ( self == null ) {
@@ -213,7 +280,7 @@ steps:
       input:
         align-to-human/aligned-file
       output_name:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
               return self.nameroot + '.human.bam'
@@ -233,7 +300,7 @@ steps:
       input:
         source: convert-human/output
       output_name:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
               return self.nameroot + '.sorted.human.bam'
@@ -336,6 +403,7 @@ steps:
           }
 
     out: [output]
+
   #
   # xenomapper
   #
@@ -348,37 +416,37 @@ steps:
       secondary_sam:
         source: align-to-mouse/aligned-file
       primary_specific_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.human_specific.sam'
           }
       secondary_specific_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.mouse_specific.sam'
           }
       primary_multi_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.human_multi.sam'
           }
       secondary_multi_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.mouse_multi.sam'
           }
       unassigned_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.unassigned.sam'
           }
       unresolved_fn:
-        source: trim/reads1_trimmed
+        source: rename_reads1_trimmed/renamed
         valueFrom: >
           ${
             return self.nameroot + '.unresolved.sam'
@@ -421,9 +489,9 @@ steps:
     out: [combined]
 
   #
-  # Call with platyus
+  # Call with platypus
   #
-  platyus:
+  platypus:
     run: tools/platypus.cwl
 
     in:
@@ -452,30 +520,5 @@ steps:
           }
 
     out: [output]
-
-#-------------------------------------------------------------------------
-  # rename:
-  #   run:
-  #     class: ExpressionTool
-  #     inputs:
-  #       login:
-  #         type: File
-  #     outputs:
-  #       logout: Directory
-  #     expression: >
-  #       ${
-  #       var outfile = inputs.login;
-  #       outfile.path = outfile.path + '/dataout';
-  #       return {"logout" : {
-  #                 "class" : "Directory",
-  #                 "basename" : "dataout",
-  #                 "listing" : [inputs.login]
-  #                         }
-  #               }
-  #       }
-
-  #   in:
-  #     login: trimmomatic/output_log
-  #   out: [logout]
 
 

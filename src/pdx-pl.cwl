@@ -125,7 +125,7 @@ steps:
       end_mode:
         default: PE
       nthreads:
-        valueFrom: ${ return 4; }
+        valueFrom: ${ return 8; }
       illuminaClip:
         default:
           adapters:
@@ -184,7 +184,7 @@ steps:
               return self.nameroot + '.mouse.sam'
           }
       threads:
-        valueFrom: ${ return 4; }
+        valueFrom: ${ return 8; }
       one:
         source: trim/reads1_trimmed
         valueFrom: >
@@ -234,7 +234,7 @@ steps:
               return self.nameroot + '.human.sam'
           }
       threads:
-        valueFrom: ${ return 4; }
+        valueFrom: ${ return 8; }
       one:
         source: rename_reads1_trimmed/renamed
         valueFrom: >
@@ -286,7 +286,7 @@ steps:
               return self.nameroot + '.human.bam'
           }
       threads:
-        valueFrom: ${ return 4; }
+        valueFrom: ${ return 8; }
 
     out: [output]
 
@@ -306,7 +306,7 @@ steps:
               return self.nameroot + '.sorted.human.bam'
           }
       threads:
-        valueFrom: ${ return 4; }
+        valueFrom: ${ return 8; }
 
     out: [sorted]
 

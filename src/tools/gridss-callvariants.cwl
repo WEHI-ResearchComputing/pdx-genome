@@ -22,7 +22,7 @@ inputs:
       The reference genome used for all input files matches the reference genome supplied to GRIDSS.
 
   TMP_DIR:
-    type: Directory?
+    type: string?
     inputBinding:
       prefix: TMP_DIR=
       separate: false
@@ -31,7 +31,7 @@ inputs:
       Temporary files created during processes such as sort are written to this directory.
 
   WORKING_DIR:
-    type: Directory?
+    type: string?
     inputBinding:
       prefix: WORKING_DIR=
       separate: false
@@ -39,6 +39,17 @@ inputs:
       Directory to write intermediate results directories. By default, intermediate files for each input or output file are
       written to a subdirectory in the same directory as the relevant input or output file. If WORKING_DIR is set, all
       intermediate results are written to subdirectories of the given directory.
+
+  WORKING_THREADS:
+    type: int?
+    inputBinding:
+      prefix: WORKING_THREADS=
+      separate: false
+    doc: |
+      Number of processing threads to use, including number of thread to use when invoking the aligner. Note that the number
+      of threads spawned by GRIDSS is greater than the number of worker threads due to asynchronous I/O threads thus it is
+      not uncommon to see over 100% CPU usage when WORKER_THREADS=1 as bam compression/decompression is a computationally
+      expensive operation. This parameter defaults to the number of cores available.
 
   REFERENCE_SEQUENCE:
     type: string

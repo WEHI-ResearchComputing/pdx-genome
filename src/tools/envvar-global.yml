@@ -24,3 +24,5 @@ envDef:
     envValue: "/stornext/System/data/apps/R/R-3.4.0/lib64/R/dir"
   - envName: "LIBRARY_PATH"
     envValue: "/stornext/System/data/apps/R/R-3.4.0/lib64/R/lib:/stornext/System/data/apps/bwa/bwa-0.7.15/lib "
+  - envName: "TMP"
+    envValue: "/home/thomas.e/tmp"

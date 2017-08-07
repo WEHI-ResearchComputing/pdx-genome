@@ -86,7 +86,7 @@ outputs:
   human-mpileup:
     type: File
     outputSource: mpileup-human/output
-  # varscan output
+ # varscan output
   varscan:
     type: File
     outputSource: varscan-human/output
@@ -125,7 +125,7 @@ steps:
       end_mode:
         default: PE
       nthreads:
-        valueFrom: ${ return 8; }
+        valueFrom: ${ return 27; }
       illuminaClip:
         default:
           adapters:
@@ -184,7 +184,7 @@ steps:
               return self.nameroot + '.mouse.sam'
           }
       threads:
-        valueFrom: ${ return 8; }
+        valueFrom: ${ return 27; }
       one:
         source: trim/reads1_trimmed
         valueFrom: >
@@ -234,7 +234,7 @@ steps:
               return self.nameroot + '.human.sam'
           }
       threads:
-        valueFrom: ${ return 8; }
+        valueFrom: ${ return 27; }
       one:
         source: rename_reads1_trimmed/renamed
         valueFrom: >
@@ -286,7 +286,7 @@ steps:
               return self.nameroot + '.human.bam'
           }
       threads:
-        valueFrom: ${ return 8; }
+        valueFrom: ${ return 27; }
 
     out: [output]
 
@@ -306,7 +306,7 @@ steps:
               return self.nameroot + '.sorted.human.bam'
           }
       threads:
-        valueFrom: ${ return 8; }
+        valueFrom: ${ return 27; }
 
     out: [sorted]
 
@@ -400,6 +400,18 @@ steps:
         valueFrom: >
           ${
               return self.nameroot + '.gridss.bam'
+          }
+
+      TMP_DIR:
+        valueFrom: >
+          ${
+              return "/home/thomas.e/tmp/";
+          }
+
+      WORKING_DIR:
+        valueFrom: >
+          ${
+              return "/home/thomas.e/tmp/";
           }
 
     out: [output]

@@ -4,8 +4,6 @@ class: Workflow
 cwlVersion: v1.0
 
 requirements:
-- $import: tools/trimmomatic-types.yml
-- $import: tools/envvar-global.yml
 - class: InlineJavascriptRequirement
   expressionLib:
   - var rename_trim_file = function() {
@@ -19,8 +17,11 @@ requirements:
       }
     };
   - var num_threads = function() { return 4; };
+  - var tool_location = function() { return "tools/src/tools/"; };
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
+- $import: ../tools/src/tools/trimmomatic-types.yml
+- $import: ../tools/src/tools/envvar-global.yml
 
 inputs:
   read1: File
@@ -113,7 +114,7 @@ steps:
   # trim with trimmomatic
   #
   trim:
-    run: tools/trimmomatic.cwl
+    run: ../tools/src/tools/trimmomatic.cwl
 
     in:
       reads1:
@@ -151,7 +152,7 @@ steps:
   # rename trimmed files by removing redundant '.fastq' from the filename
   #
   rename_reads1_trimmed:
-    run: tools/rename-file.cwl
+    run: ../tools/src/tools/rename-file.cwl
 
     in:
       infile: trim/reads1_trimmed
@@ -162,7 +163,7 @@ steps:
     out: [renamed]
 
   rename_reads2_trimmed_paired:
-    run: tools/rename-file.cwl
+    run: ../tools/src/tools/rename-file.cwl
 
     in:
       infile: trim/reads2_trimmed_paired
@@ -176,7 +177,7 @@ steps:
   # align to mouse reference with bowtie2
   #
   align-to-mouse:
-    run: tools/bowtie2.cwl
+    run: ../tools/src/tools/bowtie2.cwl
 
     in:
       samout:
@@ -223,7 +224,7 @@ steps:
   # align to human reference with bowtie2
   #
   align-to-human:
-    run: tools/bowtie2.cwl
+    run: ../tools/src/tools/bowtie2.cwl
 
     in:
       samout:
@@ -273,7 +274,7 @@ steps:
   # convert human
   #
   convert-human:
-    run: tools/samtools-view.cwl
+    run: ../tools/src/tools/samtools-view.cwl
 
     in:
       input:
@@ -293,7 +294,7 @@ steps:
   # sort and compress human
   #
   sort-human:
-    run: tools/samtools-sort.cwl
+    run: ../tools/src/tools/samtools-sort.cwl
 
     in:
       input:
@@ -313,7 +314,7 @@ steps:
   # index human bam
   #
   index-human:
-    run: tools/samtools-index.cwl
+    run: ../tools/src/tools/samtools-index.cwl
 
     in:
       input:
@@ -325,7 +326,7 @@ steps:
   # human pileup file
   #
   mpileup-human:
-    run: tools/samtools-mpileup.cwl
+    run: ../tools/src/tools/samtools-mpileup.cwl
 
     in:
       bamFiles:
@@ -352,7 +353,7 @@ steps:
   # varscan human
   #
   varscan-human:
-    run: tools/varscan-mpileup2snp.cwl
+    run: ../tools/src/tools/varscan-mpileup2snp.cwl
 
     in:
       input:
@@ -370,7 +371,7 @@ steps:
   # GRIDSS that human
   #
   gridss-human:
-    run: tools/gridss-callvariants.cwl
+    run: ../tools/src/tools/gridss-callvariants.cwl
 
     in:
       INPUT:
@@ -419,7 +420,7 @@ steps:
   # xenomapper
   #
   xenomapping:
-    run: tools/xenomapper.cwl
+    run: ../tools/src/tools/xenomapper.cwl
 
     in:
       primary_sam:
@@ -503,7 +504,7 @@ steps:
   # Call with platypus
   #
   platypus:
-    run: tools/platypus.cwl
+    run: ../tools/src/tools/platypus.cwl
 
     in:
       bamFiles:
@@ -533,7 +534,7 @@ steps:
   # Variant Effect predictor
   #
   vep-human:
-    run: tools/vep.cwl
+    run: ../tools/src/tools/vep.cwl
 
     in:
       input_file:

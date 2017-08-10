@@ -8,6 +8,8 @@ requirements:
 #- $import: samtools-docker.yml
 - class: InlineJavascriptRequirement
 
+baseCommand: vep
+
 inputs:
   quiet:
     type: boolean?
@@ -78,8 +80,10 @@ inputs:
       --input_file [filename] -i Input file name. If not specified, the script will attempt to read from STDIN.
 
   format:
-    type: enum?
-    symbols: ["ensembl", "vcf", "hgvs", "id"]
+    type:
+    - "null"
+    - type: enum
+      symbols: ["ensembl", "vcf", "hgvs", "id"]
     inputBinding:
       prefix: --format
     doc: |
@@ -126,21 +130,21 @@ inputs:
       --cache  Enables use of the cache. Add --refseq or --merged to use the refseq or merged cache, (if installed).
 
   dir:
-    type: Directory?
+    type: string?
     inputBinding:
       prefix: --dir
     doc: |
       --dir [directory] Specify the base cache/plugin directory to use. Default = "$HOME/.vep/"
 
   dir_cache:
-    type: Directory?
+    type: string?
     inputBinding:
       prefix: --dir_cache
     doc: |
       --dir_cache [directory] Specify the cache directory to use. Default = "$HOME/.vep/"
 
   dir_plugins:
-    type: Directory
+    type: Directory?
     inputBinding:
       prefix: --dir_plugins
     doc: |
@@ -155,13 +159,9 @@ inputs:
       is required for annotation. Add --refseq to use the refseq cache (if installed). Not used by default
 
   fasta:
-    type:
-      - File
-      - Directory
-      - null
+    type: string
     inputBinding:
-      prefix:
-        --fasta
+      prefix: --fasta
     doc: |
       --fasta [file|dir] Specify a FASTA file or a directory containing FASTA files to use to look up reference
       sequence. The first time you run the script with this parameter an index will be built which can take a few
@@ -262,8 +262,10 @@ inputs:
       --variant_class Output the Sequence Ontology variant class. Not used by default
 
   sift:
-    type: enum?
-    symbols: ['p', 's', 'b']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['p', 's', 'b']
     inputBinding:
       prefix: --sift
     doc: |
@@ -272,8 +274,10 @@ inputs:
       prediction term, score or both. Not used by default
 
   polyphen:
-    type: enum?
-    symbols: ['p', 's', 'b']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['p', 's', 'b']
     inputBinding:
       prefix: --polyphen
     doc: |
@@ -283,8 +287,10 @@ inputs:
       humVar score by default - use --humdiv to retrieve the humDiv score. Not used by default
 
   nearest:
-    type: enum?
-    symbols: ['transcript', 'gene', 'symbol']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['transcript', 'gene', 'symbol']
     inputBinding:
       prefix: --nearest
     doc: |
@@ -334,8 +340,10 @@ inputs:
       in the output. To retrieve a list of cell types, use --cell_type list. Not used by default
 
   individual:
-    type: enum?
-    symbols: [all', 'ind list']
+    type:
+    - "null"
+    - type: enum
+      symbols: [all', 'ind list']
     inputBinding:
       prefix: --individual
     doc: |
@@ -402,8 +410,10 @@ inputs:
       in its VCF output. Use "ANN" for compatibility with other tools such as snpEff. Default: CSQ
 
   terms:
-    type: enum?
-    symbols: ['ensembl', 'so']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['ensembl', 'so']
     inputBinding:
       prefix: -terms
     doc: |
@@ -430,8 +440,10 @@ inputs:
       when using --cache or --offline you must use a FASTA file and --fasta. Not used by default
 
   shift_hgvs:
-    type: enum?
-    symbols: ['0', '1']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['0', '1']
     inputBinding:
       prefix: --shift_hgvs
     doc: |
@@ -605,8 +617,10 @@ inputs:
       Not used by default
 
   failed:
-    type: enum?
-    symbols: ['0', '1']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['0', '1']
     inputBinding:
       prefix: --failed
     doc: |
@@ -646,8 +660,10 @@ inputs:
       --json  Writes output in JSON format. Not used by default
 
   compress_output:
-    type: enum?
-    symbols: ['gzip', 'bgzip']
+    type:
+    - "null"
+    - type: enum
+      symbols: [gzip, bgzip]
     inputBinding:
       prefix: --compress_output
     doc: |
@@ -788,7 +804,7 @@ inputs:
       more than one has the same predicted consequence. Uses the same ranking system as --pick. Not used by default
 
   pick_allele_gene:
-    typ: boolean?
+    type: boolean?
     inputBinding:
       prefix: --pick_allele_gene
     doc: |
@@ -864,8 +880,10 @@ inputs:
       output under the FREQS key in the Extra field. Not used by default
 
   freq_pop:
-    type: enum?
-    symbols: ['1KG_ALL','1KG_AFR','1KG_AMR','1KG_EAS','1KG_EUR','1KG_SAS','ESP_AA','ESP_EA','ExAC','ExAC_Adj','ExAC_AFR','ExAC_AMR','ExAC_EAS','ExAC_FIN','ExAC_NFE','ExAC_SAS','ExAC_OTH']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['1KG_ALL','1KG_AFR','1KG_AMR','1KG_EAS','1KG_EUR','1KG_SAS','ESP_AA','ESP_EA','ExAC','ExAC_Adj','ExAC_AFR','ExAC_AMR','ExAC_EAS','ExAC_FIN','ExAC_NFE','ExAC_SAS','ExAC_OTH']
     inputBinding:
       prefix: --freq_pop
     doc: |
@@ -897,8 +915,10 @@ inputs:
       --freq_freq [freq]  Allele frequency to use for filtering. Must be a float value between 0 and 1
 
   freq_gt_lt:
-    type: enum?
-    symbols: ['gt', 'lt']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['gt', 'lt']
     inputBinding:
       prefix: --freq_gt_lt
     doc: |
@@ -906,8 +926,10 @@ inputs:
       (gt) or less than (lt) the value specified with --freq_freq
 
   freq_filter:
-    type: enum?
-    symbols: ['exclude', 'include']
+    type:
+    - "null"
+    - type: enum
+      symbols: ['exclude', 'include']
     inputBinding:
       prefix: --freq_filter
     doc: |
@@ -990,10 +1012,13 @@ inputs:
       --registry [filename]  Defining a registry file overwrites other connection settings and uses those
       found in the specified registry file to connect. Not used by default
 
-output:
-  out:
+outputs:
+  text:
     type: File
     outputBinding:
       glob: $(inputs.output_file)
+  html:
+    type: File
+    outputBinding:
+      glob: $(inputs.output_file+'_summary.html')
 
-S

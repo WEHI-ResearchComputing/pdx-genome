@@ -18,6 +18,7 @@ requirements:
         return xx.join('.');
       }
     };
+  - var num_threads = function() { return 4; };
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
 
@@ -98,6 +99,13 @@ outputs:
   gridss:
     type: File
     outputSource: gridss-human/output
+  # VEP
+  vep-text:
+    type: File
+    outputSource: vep-human/text
+  vep-html:
+    type: File
+    outputSource: vep-human/html
 
 steps:
 
@@ -125,7 +133,7 @@ steps:
       end_mode:
         default: PE
       nthreads:
-        valueFrom: ${ return 27; }
+        valueFrom: ${ return num_threads(); }
       illuminaClip:
         default:
           adapters:
@@ -149,10 +157,7 @@ steps:
       infile: trim/reads1_trimmed
       outfile:
         source: trim/reads1_trimmed
-        valueFrom: >
-          ${
-              return rename_trim_file();
-          }
+        valueFrom: ${ return rename_trim_file(); }
 
     out: [renamed]
 
@@ -163,10 +168,7 @@ steps:
       infile: trim/reads2_trimmed_paired
       outfile:
         source: trim/reads2_trimmed_paired
-        valueFrom: >
-          ${
-              return rename_trim_file();
-          }
+        valueFrom: ${ return rename_trim_file(); }
 
     out: [renamed]
 
@@ -179,10 +181,7 @@ steps:
     in:
       samout:
         source: rename_reads1_trimmed/renamed
-        valueFrom: >
-          ${
-              return self.nameroot + '.mouse.sam'
-          }
+        valueFrom: ${ return self.nameroot + '.mouse.sam'; }
       threads:
         valueFrom: ${ return 27; }
       one:
@@ -234,7 +233,7 @@ steps:
               return self.nameroot + '.human.sam'
           }
       threads:
-        valueFrom: ${ return 27; }
+        valueFrom: ${ return num_threads(); }
       one:
         source: rename_reads1_trimmed/renamed
         valueFrom: >
@@ -286,7 +285,7 @@ steps:
               return self.nameroot + '.human.bam'
           }
       threads:
-        valueFrom: ${ return 27; }
+        valueFrom: ${ return num_threads(); }
 
     out: [output]
 
@@ -306,7 +305,7 @@ steps:
               return self.nameroot + '.sorted.human.bam'
           }
       threads:
-        valueFrom: ${ return 27; }
+        valueFrom: ${ return num_threads(); }
 
     out: [sorted]
 
@@ -526,11 +525,37 @@ steps:
               return self.nameroot + '.platypus.vcf'
           }
       verbosity:
-        valueFrom: >
-          ${
-            return 0;
-          }
+        valueFrom: ${ return 0; }
 
     out: [output]
 
+  #
+  # Variant Effect predictor
+  #
+  vep-human:
+    run: tools/vep.cwl
 
+    in:
+      input_file:
+        source: platypus/output
+
+      output_file:
+        source: platypus/output
+        valueFrom: >
+          ${
+              return self.nameroot + '.vep.txt'
+          }
+
+      fasta:
+        default: /wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
+
+      cache:
+        valueFrom: ${ return true; }
+      everything:
+        valueFrom: ${ return true; }
+      fork:
+        valueFrom: ${ return num_threads(); }
+      dir_cache:
+        default: '/stornext/HPCScratch/cache/.vep'
+
+    out: [text, html]

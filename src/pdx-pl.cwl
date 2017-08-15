@@ -36,13 +36,19 @@ outputs:
     type: File
     outputSource: rename_reads1_trimmed/renamed
   rename_reads2_trimmed_paired_file:
-    type: File
+    type:
+    - "null"
+    -  File
     outputSource: trim/reads2_trimmed_unpaired
   reads1_trimmed_unpaired_file:
-    type: File
+    type:
+    - "null"
+    - File
     outputSource: trim/reads1_trimmed_unpaired
   reads2_trimmed_unpaired_file:
-    type: File
+    type:
+    - "null"
+    - File
     outputSource: trim/reads2_trimmed_unpaired
   # align to mouse with bowtie2
   mouse-aligned:

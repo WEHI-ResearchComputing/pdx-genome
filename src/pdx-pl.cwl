@@ -17,15 +17,27 @@ requirements:
       }
     };
   - var num_threads = function() { return 4; };
-  - var tool_location = function() { return "tools/src/tools/"; };
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
-- $import: ../tools/src/tools/trimmomatic-types.yml
-- $import: ../tools/src/tools/envvar-global.yml
+- class: SchemaDefRequirement
+  types:
+  - $import: ../tools/src/tools/trimmomatic-end_mode.yml
+  - $import: ../tools/src/tools/trimmomatic-sliding_window.yml
+  - $import: ../tools/src/tools/trimmomatic-phred.yml
+  - $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
+  - $import: ../tools/src/tools/trimmomatic-max_info.yml
+#- $import: ../tools/src/tools/trimmomatic-types.yml
+#- $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
+#- $import: ../tools/src/tools/envvar-global.yml
 
 inputs:
   read1: File
   read2: File
+  adapters:
+      type: File
+      default:
+        class: File
+        path: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa
 
 outputs:
   # trim with trimmomatic and rename
@@ -117,6 +129,28 @@ outputs:
 steps:
 
   #
+  # God awful hack to get CWL to work with toil. See:
+  # https://github.com/BD2KGenomics/toil/issues/1801
+  #
+  package_Illumina_clipping:
+    in: { illumina_adapters: adapters }
+    run:
+      class: ExpressionTool
+      requirements: { InlineJavascriptRequirement: {} }
+      inputs: { illumina_adapters: File }
+      expression: |
+        ${ var illuminaClip = {
+              "adapters": inputs.illumina_adapters,
+              "seedMismatches": 1,
+              "palindromeClipThreshold": 20,
+              "simpleClipThreshold": 20,
+              "minAdapterLength": 4,
+              "keepBothReads": true };
+           return { "illuminaClip": illuminaClip };
+        }
+      outputs: { illuminaClip: ../tools/src/tools/trimmomatic-illumina_clipping.yml#illuminaClipping }
+    out: [ illuminaClip ]
+  #
   # trim with trimmomatic
   #
   trim:
@@ -141,16 +175,7 @@ steps:
         default: PE
       nthreads:
         valueFrom: ${ return num_threads(); }
-      illuminaClip:
-        default:
-          adapters:
-            class: File
-            location: "/stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa"
-          seedMismatches: 1
-          palindromeClipThreshold: 20
-          simpleClipThreshold: 20
-          minAdapterLength: 4
-          keepBothReads: "true"
+      illuminaClip: package_Illumina_clipping/illuminaClip
 
     out: [output_log, reads1_trimmed, reads1_trimmed_unpaired, reads2_trimmed_paired, reads2_trimmed_unpaired]
 

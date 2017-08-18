@@ -138,7 +138,7 @@ steps:
       inputs: { illumina_adapters: File }
       expression: |
         ${ var illuminaClip = {
-              "adapters": inputs.illumina_adapters,
+              "adapters": inputs.adapters,
               "seedMismatches": 1,
               "palindromeClipThreshold": 20,
               "simpleClipThreshold": 20,

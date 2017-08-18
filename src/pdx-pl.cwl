@@ -26,9 +26,6 @@ requirements:
   - $import: ../tools/src/tools/trimmomatic-phred.yml
   - $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
   - $import: ../tools/src/tools/trimmomatic-max_info.yml
-#- $import: ../tools/src/tools/trimmomatic-types.yml
-#- $import: ../tools/src/tools/trimmomatic-illumina_clipping.yml
-#- $import: ../tools/src/tools/envvar-global.yml
 
 inputs:
   read1: File
@@ -38,6 +35,7 @@ inputs:
       default:
         class: File
         path: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa
+        location: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa
 
 outputs:
   # trim with trimmomatic and rename
@@ -150,6 +148,7 @@ steps:
         }
       outputs: { illuminaClip: ../tools/src/tools/trimmomatic-illumina_clipping.yml#illuminaClipping }
     out: [ illuminaClip ]
+
   #
   # trim with trimmomatic
   #
@@ -498,40 +497,6 @@ steps:
     out: [primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved]
 
   #
-  # Gather human bam and index into one dependency
-  #
-  gather:
-    run:
-      class: ExpressionTool
-
-      inputs:
-        bamFile:
-          type: File
-        bamIndex:
-          type: File
-
-      outputs:
-        combined:
-          type: File
-
-      expression: >
-        ${
-          var ret = inputs.bamFile;
-          ret["secondaryFiles"] = [
-            inputs.bamIndex
-          ];
-          return {"combined" : ret};
-        }
-
-    in:
-      bamFile:
-        source: sort-human/sorted
-      bamIndex:
-        source: index-human/index
-
-    out: [combined]
-
-  #
   # Call with platypus
   #
   platypus:
@@ -539,7 +504,7 @@ steps:
 
     in:
       bamFiles:
-        source: gather/combined
+        source: index-human/index
         valueFrom: >
           ${
             if ( self == null ) {

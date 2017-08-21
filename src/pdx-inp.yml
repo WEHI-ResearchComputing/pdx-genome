@@ -1,11 +1,17 @@
-read1:
-  class: File
-  format: "edam:format_1930"
-  location: "../data/S1_R1.fastq.gz"
-read2:
-  class: File
-  format: "edam:format_1930"
-  path: "../data/S1_R2.fastq.gz"
+reads1:
+  - class: File
+    format: "edam:format_1930"
+    location: "../data/S1_R1.fastq.gz"
+  - class: File
+    format: "edam:format_1930"
+    location: "../data/S2_R1.fastq.gz"
+reads2:
+  - class: File
+    format: "edam:format_1930"
+    path: "../data/S1_R2.fastq.gz"
+  - class: File
+    format: "edam:format_1930"
+    path: "../data/S2_R2.fastq.gz"
 
 
 $namespaces: { edam: http://edamontology.org/ }

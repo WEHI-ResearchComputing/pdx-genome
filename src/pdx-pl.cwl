@@ -125,30 +125,6 @@ outputs:
     outputSource: vep-human/html
 
 steps:
-
-  #
-  # God awful hack to get CWL to work with toil. See:
-  # https://github.com/BD2KGenomics/toil/issues/1801
-  #
-  package_Illumina_clipping:
-    in: { illumina_adapters: adapters }
-    run:
-      class: ExpressionTool
-      requirements: { InlineJavascriptRequirement: {} }
-      inputs: { illumina_adapters: File }
-      expression: |
-        ${ var illuminaClip = {
-              "adapters": inputs.adapters,
-              "seedMismatches": 1,
-              "palindromeClipThreshold": 20,
-              "simpleClipThreshold": 20,
-              "minAdapterLength": 4,
-              "keepBothReads": true };
-           return { "illuminaClip": illuminaClip };
-        }
-      outputs: { illuminaClip: ../tools/src/tools/trimmomatic-illumina_clipping.yml#illuminaClipping }
-    out: [ illuminaClip ]
-
   #
   # trim with trimmomatic
   #
@@ -174,7 +150,18 @@ steps:
         default: PE
       nthreads:
         valueFrom: ${ return num_threads(); }
-      illuminaClip: package_Illumina_clipping/illuminaClip
+      illuminaClip:
+        source: adapters
+        valueFrom: |
+          ${
+              return {
+              "adapters": self,
+              "seedMismatches": 1,
+              "palindromeClipThreshold": 20,
+              "simpleClipThreshold": 20,
+              "minAdapterLength": 4,
+              "keepBothReads": true };
+          }
 
     out: [output_log, reads1_trimmed, reads1_trimmed_unpaired, reads2_trimmed_paired, reads2_trimmed_unpaired]
 

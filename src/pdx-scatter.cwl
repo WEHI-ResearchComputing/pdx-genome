@@ -12,6 +12,12 @@ requirements:
 inputs:
   reads1: File[]
   reads2: File[]
+  adapters:
+      type: File
+      default:
+        class: File
+        path: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa
+        location: /stornext/System/data/apps/trimmomatic/trimmomatic-0.36/adapters/TruSeq3-PE.fa
 
 outputs:
   # trim with trimmomatic and rename
@@ -125,6 +131,9 @@ steps:
         source: reads1
       read2:
         source: reads2
+      adapters:
+        source: adapters
+
 
     out: [trim-logs, rename_reads1_trimmed_file, rename_reads2_trimmed_paired_file, reads1_trimmed_unpaired_file, reads2_trimmed_unpaired_file, mouse-aligned, human-aligned, human-sorted, human-compress, human-index, primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved, human-mpileup, varscan, platypus-vcf, gridss, vep-text, vep-html]
 

@@ -94,29 +94,35 @@ outputs:
     - "null"
     - File[]
     outputSource: all/unresolved
-  # pileip
-  human-mpileup:
-    type: File[]
-    outputSource: all/human-mpileup
- # varscan output
-  varscan:
-    type: File[]
-    outputSource: all/varscan
+ #  # pileip
+ #  human-mpileup:
+ #    type: File[]
+ #    outputSource: all/human-mpileup
+ # # varscan output
+ #  varscan:
+ #    type: File[]
+ #    outputSource: all/varscan
   # platypus output
-  platypus-vcf:
+  platypus-tabix-output:
     type: File[]
-    outputSource: all/platypus-vcf
+    outputSource: all/platypus-tabix-output
   # gridss
-  gridss:
+  gridss-tabix-output:
     type: File[]
-    outputSource: all/gridss
-  # VEP
-  vep-text:
-    type: File[]
-    outputSource: all/vep-text
-  vep-html:
-    type: File[]
-    outputSource: all/vep-html
+    outputSource: all/gridss-tabix-output
+  gridss-vcf-work-dir:
+    type: Directory[]
+    outputSource: all/gridss-vcf-work-dir
+  gridss-bam-work-dir:
+    type: Directory[]
+    outputSource: all/gridss-bam-work-dir
+  # # VEP
+  # vep-text:
+  #   type: File[]
+  #   outputSource: all/vep-text
+  # vep-html:
+  #   type: File[]
+  #   outputSource: all/vep-html
 
 steps:
 
@@ -135,6 +141,26 @@ steps:
         source: adapters
 
 
-    out: [trim-logs, rename_reads1_trimmed_file, rename_reads2_trimmed_paired_file, reads1_trimmed_unpaired_file, reads2_trimmed_unpaired_file, mouse-aligned, human-aligned, human-sorted, human-compress, human-index, primary_specific, secondary_specific, primary_multi, secondary_multi, unassigned, unresolved, human-mpileup, varscan, platypus-vcf, gridss, vep-text, vep-html]
+    out: [
+      trim-logs,
+      rename_reads1_trimmed_file,
+      rename_reads2_trimmed_paired_file,
+      reads1_trimmed_unpaired_file,
+      reads2_trimmed_unpaired_file,
+      mouse-aligned,
+      human-aligned,
+      human-sorted,
+      human-compress,
+      human-index,
+      primary_specific,
+      secondary_specific,
+      primary_multi,
+      secondary_multi,
+      unassigned,
+      unresolved,
+      platypus-tabix-output,
+      gridss-tabix-output,
+      gridss-vcf-work-dir,
+      gridss-bam-work-dir]
 
 

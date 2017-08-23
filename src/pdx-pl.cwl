@@ -100,29 +100,36 @@ outputs:
   unresolved:
     type: File?
     outputSource: xenomapping/unresolved
-  # pileip
-  human-mpileup:
-    type: File
-    outputSource: mpileup-human/output
- # varscan output
-  varscan:
-    type: File
-    outputSource: varscan-human/output
+  # # pileup
+  # human-mpileup:
+  #   type: File
+  #   outputSource: mpileup-human/output
+ # # varscan output
+ #  varscan:
+ #    type: File
+ #    outputSource: varscan-human/output
   # platypus output
-  platypus-vcf:
+  platypus-tabix-output:
     type: File
-    outputSource: platypus/output
+    outputSource: platypus-tabix/tabix
   # gridss
-  gridss:
+  gridss-tabix-output:
     type: File
-    outputSource: gridss-human/output
-  # VEP
-  vep-text:
-    type: File
-    outputSource: vep-human/text
-  vep-html:
-    type: File
-    outputSource: vep-human/html
+    outputSource: gridss-tabix/tabix
+  gridss-vcf-work-dir:
+    type: Directory
+    outputSource: gridss-human/vcf_working
+  gridss-bam-work-dir:
+    type: Directory
+    outputSource: gridss-human/bam_working
+
+  # # VEP
+  # vep-text:
+  #   type: File
+  #   outputSource: vep-human/text
+  # vep-html:
+  #   type: File
+  #   outputSource: vep-human/html
 
 steps:
   #
@@ -339,50 +346,50 @@ steps:
 
     out: [index]
 
-  #
-  # human pileup file
-  #
-  mpileup-human:
-    run: ../tools/src/tools/samtools-mpileup.cwl
+  # #
+  # # human pileup file
+  # #
+  # mpileup-human:
+  #   run: ../tools/src/tools/samtools-mpileup.cwl
 
-    in:
-      bamFiles:
-        source: sort-human/sorted
-        valueFrom: >
-          ${
-              if ( self == null ) {
-                return null;
-              } else {
-                return [self];
-              }
-            }
+  #   in:
+  #     bamFiles:
+  #       source: sort-human/sorted
+  #       valueFrom: >
+  #         ${
+  #             if ( self == null ) {
+  #               return null;
+  #             } else {
+  #               return [self];
+  #             }
+  #           }
 
-      output_fn:
-        source: sort-human/sorted
-        valueFrom: >
-          ${
-            return self.nameroot + '.pileup'
-          }
+  #     output_fn:
+  #       source: sort-human/sorted
+  #       valueFrom: >
+  #         ${
+  #           return self.nameroot + '.pileup'
+  #         }
 
-    out: [output]
+  #   out: [output]
 
-  #
-  # varscan human
-  #
-  varscan-human:
-    run: ../tools/src/tools/varscan-mpileup2snp.cwl
+  # #
+  # # varscan human
+  # #
+  # varscan-human:
+  #   run: ../tools/src/tools/varscan-mpileup2snp.cwl
 
-    in:
-      input:
-        source: mpileup-human/output
+  #   in:
+  #     input:
+  #       source: mpileup-human/output
 
-      output-vcf:
-        valueFrom: >
-          ${
-            return true;
-          }
+  #     output-vcf:
+  #       valueFrom: >
+  #         ${
+  #           return true;
+  #         }
 
-    out: [output]
+  #   out: [output]
 
   #
   # GRIDSS that human
@@ -419,19 +426,40 @@ steps:
               return self.nameroot + '.gridss.bam'
           }
 
-      TMP_DIR:
-        valueFrom: >
-          ${
-              return "/home/thomas.e/tmp/";
-          }
+      # TMP_DIR:
+      #   valueFrom: >
+      #     ${
+      #         return "/home/thomas.e/tmp/";
+      #     }
 
-      WORKING_DIR:
-        valueFrom: >
-          ${
-              return "/home/thomas.e/tmp/";
-          }
+      # WORKING_DIR:
+      #   valueFrom: >
+      #     ${
+      #         return "/home/thomas.e/tmp/";
+      #     }
 
-    out: [output]
+    out: [vcf, bam, vcf_working, bam_working]
+
+  #
+  # Compress and index vcf output
+  #
+  gridss-bgzip:
+    run: ../tools/src/tools/bgzip.cwl
+
+    in:
+      inputFile: gridss-human/vcf
+
+    out: [bgzip]
+
+  gridss-tabix:
+    run: ../tools/src/tools/tabix.cwl
+
+    in:
+      inputFile: gridss-bgzip/bgzip
+      preset:
+        valueFrom: $( 'vcf' )
+
+    out: [tabix]
 
   #
   # xenomapper
@@ -514,32 +542,53 @@ steps:
     out: [output]
 
   #
-  # Variant Effect predictor
+  # Compress and index vcf output
   #
-  vep-human:
-    run: ../tools/src/tools/vep.cwl
+  platypus-bgzip:
+    run: ../tools/src/tools/bgzip.cwl
 
     in:
-      input_file:
-        source: platypus/output
+      inputFile: platypus/output
 
-      output_file:
-        source: platypus/output
-        valueFrom: >
-          ${
-              return self.nameroot + '.vep.txt'
-          }
+    out: [bgzip]
 
-      fasta:
-        default: /wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
+  platypus-tabix:
+    run: ../tools/src/tools/tabix.cwl
 
-      cache:
-        valueFrom: ${ return true; }
-      everything:
-        valueFrom: ${ return true; }
-      fork:
-        valueFrom: ${ return num_threads(); }
-      dir_cache:
-        default: '/stornext/HPCScratch/cache/.vep'
+    in:
+      inputFile: platypus-bgzip/bgzip
+      preset:
+        valueFrom: $( 'vcf' )
 
-    out: [text, html]
+    out: [tabix]
+
+  # #
+  # # Variant Effect predictor
+  # #
+  # vep-human:
+  #   run: ../tools/src/tools/vep.cwl
+
+  #   in:
+  #     input_file:
+  #       source: platypus/output
+
+  #     output_file:
+  #       source: platypus/output
+  #       valueFrom: >
+  #         ${
+  #             return self.nameroot + '.vep.txt'
+  #         }
+
+  #     fasta:
+  #       default: /wehisan/bioinf/bioinf-data/Papenfuss_lab/projects/reference_genomes/human_new/no_alt/hg38_no_alt.fa
+
+  #     cache:
+  #       valueFrom: ${ return true; }
+  #     everything:
+  #       valueFrom: ${ return true; }
+  #     fork:
+  #       valueFrom: ${ return num_threads(); }
+  #     dir_cache:
+  #       default: '/stornext/HPCScratch/cache/.vep'
+
+  #   out: [text, html]

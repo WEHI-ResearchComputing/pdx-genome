@@ -139,6 +139,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 16000
 
     in:
       reads1:
@@ -182,6 +183,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 1
+        ramMin: 4000
 
     in:
       infile: trim/reads1_trimmed
@@ -196,6 +198,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 1
+        ramMin: 4000
 
     in:
       infile: trim/reads2_trimmed_paired
@@ -213,6 +216,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 25
+        ramMin: 64000
 
     in:
       samout:
@@ -263,6 +267,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 25
+        ramMin: 64000
 
     in:
       samout:
@@ -316,6 +321,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 10
+        ramMin: 32000
 
     in:
       input:
@@ -339,6 +345,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 10
+        ramMin: 32000
 
     in:
       input:
@@ -362,6 +369,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 10
+        ramMin: 32000
 
     in:
       input:
@@ -422,6 +430,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 25
+        ramMin: 64000
 
     in:
       INPUT:
@@ -462,6 +471,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 8000
 
     in:
       inputFile: gridss-human/vcf
@@ -473,6 +483,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 8000
 
     in:
       inputFile: gridss-bgzip/bgzip
@@ -489,6 +500,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 32000
 
     in:
       primary_sam:
@@ -542,6 +554,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 16000
 
     in:
       bamFiles:
@@ -575,6 +588,7 @@ steps:
     requirements:
       ResourceRequirement:
         coresMin: 2
+        ramMin: 8000
 
     in:
       inputFile: platypus/output

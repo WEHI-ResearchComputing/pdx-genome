@@ -16,7 +16,6 @@ requirements:
         return xx.join('.');
       }
     };
-  - var num_threads = function() { return 4; };
 - class: ScatterFeatureRequirement
 - class: StepInputExpressionRequirement
 - class: SchemaDefRequirement
@@ -137,6 +136,9 @@ steps:
   #
   trim:
     run: ../tools/src/tools/trimmomatic.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       reads1:
@@ -156,7 +158,7 @@ steps:
       end_mode:
         default: PE
       nthreads:
-        valueFrom: ${ return num_threads(); }
+        valueFrom: $( 2 )
       illuminaClip:
         source: adapters
         valueFrom: |
@@ -177,6 +179,9 @@ steps:
   #
   rename_reads1_trimmed:
     run: ../tools/src/tools/rename-file.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 1
 
     in:
       infile: trim/reads1_trimmed
@@ -188,6 +193,9 @@ steps:
 
   rename_reads2_trimmed_paired:
     run: ../tools/src/tools/rename-file.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 1
 
     in:
       infile: trim/reads2_trimmed_paired
@@ -202,6 +210,9 @@ steps:
   #
   align-to-mouse:
     run: ../tools/src/tools/bowtie2.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 25
 
     in:
       samout:
@@ -249,6 +260,9 @@ steps:
   #
   align-to-human:
     run: ../tools/src/tools/bowtie2.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 25
 
     in:
       samout:
@@ -258,7 +272,7 @@ steps:
               return self.nameroot + '.human.sam'
           }
       threads:
-        valueFrom: ${ return num_threads(); }
+        valueFrom: $( 25 )
       one:
         source: rename_reads1_trimmed/renamed
         valueFrom: >
@@ -299,6 +313,9 @@ steps:
   #
   convert-human:
     run: ../tools/src/tools/samtools-view.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 10
 
     in:
       input:
@@ -310,7 +327,7 @@ steps:
               return self.nameroot + '.human.bam'
           }
       threads:
-        valueFrom: ${ return num_threads(); }
+        valueFrom: $( 10 )
 
     out: [output]
 
@@ -319,6 +336,9 @@ steps:
   #
   sort-human:
     run: ../tools/src/tools/samtools-sort.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 10
 
     in:
       input:
@@ -330,7 +350,7 @@ steps:
               return self.nameroot + '.sorted.human.bam'
           }
       threads:
-        valueFrom: ${ return num_threads(); }
+        valueFrom: $( 10 )
 
     out: [sorted]
 
@@ -339,6 +359,9 @@ steps:
   #
   index-human:
     run: ../tools/src/tools/samtools-index.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 10
 
     in:
       input:
@@ -396,6 +419,9 @@ steps:
   #
   gridss-human:
     run: ../tools/src/tools/gridss-callvariants.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 25
 
     in:
       INPUT:
@@ -426,18 +452,6 @@ steps:
               return self.nameroot + '.gridss.bam'
           }
 
-      # TMP_DIR:
-      #   valueFrom: >
-      #     ${
-      #         return "/home/thomas.e/tmp/";
-      #     }
-
-      # WORKING_DIR:
-      #   valueFrom: >
-      #     ${
-      #         return "/home/thomas.e/tmp/";
-      #     }
-
     out: [vcf, bam, vcf_working, bam_working]
 
   #
@@ -445,6 +459,9 @@ steps:
   #
   gridss-bgzip:
     run: ../tools/src/tools/bgzip.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       inputFile: gridss-human/vcf
@@ -453,6 +470,9 @@ steps:
 
   gridss-tabix:
     run: ../tools/src/tools/tabix.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       inputFile: gridss-bgzip/bgzip
@@ -466,6 +486,9 @@ steps:
   #
   xenomapping:
     run: ../tools/src/tools/xenomapper.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       primary_sam:
@@ -516,6 +539,9 @@ steps:
   #
   platypus:
     run: ../tools/src/tools/platypus.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       bamFiles:
@@ -546,6 +572,9 @@ steps:
   #
   platypus-bgzip:
     run: ../tools/src/tools/bgzip.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       inputFile: platypus/output
@@ -554,6 +583,9 @@ steps:
 
   platypus-tabix:
     run: ../tools/src/tools/tabix.cwl
+    requirements:
+      ResourceRequirement:
+        coresMin: 2
 
     in:
       inputFile: platypus-bgzip/bgzip

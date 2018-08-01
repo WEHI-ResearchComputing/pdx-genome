@@ -25,5 +25,6 @@ Using the human specific reads for:
     1. Test with the CWL reference implementation
         * `cd /path/to/pdx-genome`
         * `mkdir test`
+        * `cd test`
         * `cwltool ../src/pdx-scatter.cwl ../src/pdx-inp.yml`
     2. Test with Toil. Inspect the `runall.sh` script and make sure the directories are correct. 

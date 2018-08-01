@@ -10,7 +10,7 @@ WORK_DIR=/home/thomas.e/olga
 RESULTS_DIR=${WORK_DIR}/pdx-genome/test
 CWL_DIR=${WORK_DIR}/pdx-genome/src
 LOG_DIR=${WORK_DIR}/pdx-genome/logs
-VENV_DIR=${WORK_DIR}/pdx-genome/toil-env
+VENV_DIR=${WORK_DIR}/toil-env
 #WEHI_PIPELINE=${WORK_DIR}/wehi-pipeline/src
 
 cd $RESULTS_DIR

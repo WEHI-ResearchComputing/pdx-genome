@@ -12,3 +12,18 @@ Using the human specific reads for:
 6. Varscan mutation calling (tumour only)
 7. Gridss
 8. Annotation of variants with VEP including population variant frequencies (ExAC)
+
+## Instructions
+1. Create a new empty directory to hold code, scripts and output
+2. Clone this repository: `git clone --recursive https://github.com/WEHI-ResearchComputing/pdx-genome` Note the recursive argument to bring in the common tool definitions.
+3. Create a python virtual enviroment to hold the software
+    * `module load python`
+    * `virtualenv toil-env`
+    * `. toil-env/bin/activate`
+    * `pip install git+https://github.com/WEHI-ResearchComputing/wehi-pipeline`
+4. You should now be able to run the tests against the minimal data in the `pdx-genome/data` directory.
+    1. Test with the CWL reference implementation
+        * `cd /path/to/pdx-genome`
+        * `mkdir test`
+        * `cwltool ../src/pdx-scatter.cwl ../src/pdx-inp.yml`
+    2. Test with Toil. Inspect the `runall.sh` script and make sure the directories are correct. 

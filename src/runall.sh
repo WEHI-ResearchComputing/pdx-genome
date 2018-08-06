@@ -13,12 +13,16 @@ LOG_DIR=${WORK_DIR}/pdx-genome/logs
 VENV_DIR=${WORK_DIR}/toil-env
 #WEHI_PIPELINE=${WORK_DIR}/wehi-pipeline/src
 
+export TMP=$HOME/tmp
+export TEMP=$TMP
+export TMP_DIR=$TMP
+
 cd $RESULTS_DIR
 
-module load python
+module load python node
 . ${VENV_DIR}/bin/activate
 
-DRMAA_LIBRARY_PATH=/stornext/System/data/apps/pbs-drmaa/pbs-drmaa-1.0.19/lib/libdrmaa.so
+export DRMAA_LIBRARY_PATH=/stornext/System/data/apps/pbs-drmaa/pbs-drmaa-1.0.19/lib/libdrmaa.so
 #export PYTHONPATH=${WEHI_PIPELINE}
 
 fn=`date +%Y_%m_%d_%H_%M`
